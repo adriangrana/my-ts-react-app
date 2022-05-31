@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.scss";
+import { Route, Routes } from "react-router-dom";
+import Home from "./home";
+import RestApi from "./api/Axios";
+import productClient from "./clients/product.client";
+import { useEffect, useState } from "react";
+import AuthRoute from "./utils/AuthRoute";
+import useProducts from "./hooks/useProducts";
 
 function App() {
+  const { products, details, getDetails } = useProducts([]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {products &&
+        products.map((item: any) => (
+          <div key={item.id} onClick={() => getDetails(item)}>
+            <h1>{item.title}</h1>
+            <p>{item.completed}</p>
+          </div>
+        ))}
+      {details ? (
+        <div>
+          <h1>{details.title}</h1>
+          <p>{details.completed}</p>
+          <p>{details.id}</p>
+        </div>
+      ) : null}
+      <Routes>
+        <Route path="/" element={<AuthRoute />}>
+          <Route path="home" element={<Home />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
